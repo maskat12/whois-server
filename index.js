@@ -1,16 +1,11 @@
+'use strict';
+
 var net = require('net');
 var fs = require('fs');
 require('dotenv').config()
 const db = require('./models/connection')
 const { template } = require('./modules/template');
-// var mysql      = require('mysql');
-// var connection = mysql.createConnection({
-//     host: process.env.DB_HOST,
-//     username: process.env.DB_USER,
-//     password: process.env.DB_PASS,
-//     database: process.env.DB_DATABASE,
-// });
-// connection.connect();
+
 
 var server = net.createServer(function(c) {
     console.log('client connected: ' + c.remoteAddress +":"+ c.remotePort);
@@ -20,7 +15,8 @@ var server = net.createServer(function(c) {
 
     c.on('data', function(data) {
         var domain = data.toString().trim().toUpperCase();
-        db.find(domain).then(data => {
+        console.log(db.Domain);
+        db.Domain.findDomain(domain).then(data => {
             console.log(data)
         })
         // connection.query(query, function (error, results, fields) {
@@ -35,7 +31,10 @@ var server = net.createServer(function(c) {
         // })
     });
 
-});
+}).on('error', (err) => {
+    // handle errors here
+    throw err;
+});;
 
 server.listen(43, function() {
     console.log('whois server active on port 43');
